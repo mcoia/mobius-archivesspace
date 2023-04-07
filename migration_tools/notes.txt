@@ -1,0 +1,12 @@
+Tech Docs
+https://archivesspace.github.io/tech-docs/customization/plugins.html
+
+Awesome ArchivesSpace
+https://github.com/archivesspace/awesome-archivesspace
+
+Hudson-Molonglo
+https://github.com/orgs/hudmol/repositories
+
+Queensland State Archives
+https://gitlab.gaiaresources.com/au/qsa
+
