@@ -121,7 +121,7 @@ You can also force the output to list downwards:
 
 #### Removing without taking the time to backup
 
-==Be careful, this will delete the instance without backing it up==
+**Be careful, this will delete the instance without backing it up**
 
 ```
 # as root
@@ -151,7 +151,7 @@ You can also force the output to list downwards:
 ./aspace_ctl.pl --action backup --all
 ```
 
-==The default backup folder is a relative path ../backups==
+**The default backup folder is a relative path ../backups**
 
 
 ## Creating from backup
@@ -163,7 +163,7 @@ You can create a new instance and restore it from a previous backup
 ./aspace_ctl.pl --action create --url new_aspace.domain.com --restore
 ```
 
-==This assumes that you want the "last" backup.==
+**This assumes that you want the "last" backup.**
 
 ### If you want to supply a backup file
 
@@ -172,7 +172,7 @@ You can create a new instance and restore it from a previous backup
 ./aspace_ctl.pl --action create --url new_aspace.domain.com --restore --restore_from ../backups/new_aspace_domain_com/new_aspace_domain_com_XXXXXX.tar.gz
 ```
 
-## CLoning
+## Cloning
 
 ### You can clone a server to another for testing or other reason
 
@@ -191,6 +191,7 @@ This will create a new instance from* the specified instance, to the specified v
 ```
 ./aspace_ctl.pl --action upgradetest --url current_aspace.domain.com --as_version v3.4.0
 ```
+
 ### In place Upgrade
 
 You should run an upgradetest first
