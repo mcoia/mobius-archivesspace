@@ -1,0 +1,47 @@
+---
+### ansible-playbook /mnt/evergreen/playbooks/restart_app_services.yml --private-key /home/blake/.ssh/id_rsa -vvvv -e "hosts=192.168.12.49"
+
+- hosts: localhost
+  connection: local
+  become_method: sudo
+  tasks:
+  - name: Making sure cron is installed
+    become: yes
+    package:
+      name: cron
+      state: present
+  - name: Making sure logrotate is installed
+    become: yes
+    package:
+      name: logrotate
+      state: present
+  - name: Install archivespace cron restart nightly
+    cron: name="Restart Archivespace nightly" minute="0" hour="2" job="perl -e 'sleep(rand(3000))'; cd /home/archivesspace/archivesspace && export ASPACE_JAVA_XMX='-Xmx4096m' && ./archivesspace.sh stop && ps -ef |grep java|grep -v solr| grep -v grep | awk '{print $2}' | xargs kill -9 && ./archivesspace.sh start"
+  - name: create logrotate entry
+    become: yes
+    file:
+      path: /etc/logrotate.d/archivespace
+      state: touch
+      owner: root
+      mode: '0644'
+      group: root
+  - name: Setup logrotate
+    become: yes
+    lineinfile:
+      path: /etc/logrotate.d/archivespace
+      create: yes
+      line: |
+        /home/archivesspace/archivesspace/logs/archivesspace.out {
+              daily
+              rotate 7
+              compress
+              notifempty
+              missingok
+              copytruncate
+        }
+  - name: restarting cron
+    service:
+      name: cron
+      state: restarted
+
+...

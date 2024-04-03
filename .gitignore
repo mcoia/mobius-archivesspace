@@ -1,0 +1,10 @@
+backup_proxy_setup.sh
+vars.yml
+crontab_root
+docker/as/.env
+docker/as/docker-compose.yml
+*.log
+docker/as/proxy/conf.d/*.conf
+docker/as/proxy/conf.d/*.htpasswd
+docker/as/proxy/pre/certs/*
+!docker/as/proxy/pre/certs/site.stub

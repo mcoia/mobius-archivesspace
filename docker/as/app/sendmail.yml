@@ -1,0 +1,53 @@
+---
+
+- hosts: localhost
+  connection: local
+  become_method: sudo
+  vars_files:
+    - vars.yml
+  tasks:
+## Setup sendmail
+  - name: Setup sendmail Auth config
+    become: true
+    shell: touch /etc/mail/authinfo
+  - name: Setup sendmail Auth config
+    become: true
+    lineinfile: dest=/etc/mail/authinfo state=present regexp='AuthInfo:{{smtp_relay_server}} ' line='AuthInfo:{{smtp_relay_server}} "U:smmsp" "I:{{smtp_replay_username}}" "P:{{smtp_replay_password}}" "M:PLAIN"'
+  - name: Setup sendmail Auth config
+    become: true
+    lineinfile: dest=/etc/mail/authinfo state=present regexp='AuthInfo:{{smtp_relay_server}}:587 ' line='AuthInfo:{{smtp_relay_server}}:587 "U:smmsp" "I:{{smtp_replay_username}}" "P:{{smtp_replay_password}}" "M:PLAIN"'
+  - name: Setup sendmail Auth config
+    become: true
+    lineinfile: dest=/etc/mail/authinfo state=present regexp='AuthInfo:{{smtp_relay_server}}:465 ' line='AuthInfo:{{smtp_relay_server}}:465 "U:smmsp" "I:{{smtp_replay_username}}" "P:{{smtp_replay_password}}" "M:PLAIN"'
+  - name: Setup sendmail.mc
+    become: true
+    lineinfile: dest=/etc/mail/sendmail.mc state=present insertbefore='MAILER_DEFINITIONS' regexp="define\(`SMART_HOST'" line="define(`SMART_HOST', `{{smtp_relay_server}}')dnl"
+  - name: Setup sendmail.mc
+    become: true
+    lineinfile: dest=/etc/mail/sendmail.mc state=present insertbefore='MAILER_DEFINITIONS' regexp="define\(`RELAY_MAILER_ARGS" line="define(`RELAY_MAILER_ARGS', `TCP $h 587')"
+  - name: Setup sendmail.mc
+    become: true
+    lineinfile: dest=/etc/mail/sendmail.mc state=present insertbefore='MAILER_DEFINITIONS' regexp="define\(`ESMTP_MAILER_ARGS" line="define(`ESMTP_MAILER_ARGS', `TCP $h 587')"
+  - name: Setup sendmail.mc
+    become: true
+    lineinfile: dest=/etc/mail/sendmail.mc state=present insertbefore='MAILER_DEFINITIONS' regexp="define\(`confAUTH_OPTIONS" line="define(`confAUTH_OPTIONS', `A p')dnl"
+  - name: Setup sendmail.mc
+    become: true
+    lineinfile: dest=/etc/mail/sendmail.mc state=present insertbefore='MAILER_DEFINITIONS' regexp="TRUST_AUTH_MECH\(" line="TRUST_AUTH_MECH(`EXTERNAL DIGEST-MD5 CRAM-MD5 LOGIN PLAIN')dnl"
+  - name: Setup sendmail.mc
+    become: true
+    lineinfile: dest=/etc/mail/sendmail.mc state=present insertbefore='MAILER_DEFINITIONS' regexp="define\(`confAUTH_MECHANISMS" line="define(`confAUTH_MECHANISMS', `EXTERNAL GSSAPI DIGEST-MD5 CRAM-MD5 LOGIN PLAIN')dnl"
+  - name: Setup sendmail.mc
+    become: true
+    lineinfile: dest=/etc/mail/sendmail.mc state=present insertbefore='MAILER_DEFINITIONS' regexp="FEATURE\(`authinfo" line="FEATURE(`authinfo',`hash -o /etc/mail/authinfo.db')dnl"
+  - name: Compile sendmail authentication info
+    become: true
+    shell: cd /etc/mail && /usr/sbin/makemap hash authinfo < authinfo
+  - name: Rebuild sendmail config
+    become: true
+    shell: cd /etc/mail && /usr/bin/make -C /etc/mail
+
+  - name: Stop Sendmail
+    become: true
+    service: name=sendmail state=restarted
+...

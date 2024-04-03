@@ -1,0 +1,17 @@
+---
+  mysql_master_user: asadmin
+  mysql_master_password: password
+  mysql_db_host: hostname
+  mysql_db_port: 3306
+  mysql_db_db: master_db
+  env_example_file: "{{playbook_dir}}/docker/as/.env.example"
+  env_dest: "{{playbook_dir}}/docker/as/.env"
+  aspace_version_folder: "{{playbook_dir}}/../aspace_version"
+  solr_version_folder: "{{playbook_dir}}/../solr_version"
+  aspace_container_aspace_installed_dir: /home/archivesspace/archivesspace
+  aspace_container_aspace_user: archivesspace
+  aspace_container_root_shared_folder: "{{playbook_dir}}/../shared"
+  aspace_backup_folder: "{{playbook_dir}}/../backups"
+  docker_compose_example_file: "{{playbook_dir}}/docker/as/docker-compose.yml.example"
+  docker_compose_dest: "{{playbook_dir}}/docker/as/docker-compose.yml"
+...

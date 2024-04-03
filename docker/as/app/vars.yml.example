@@ -1,0 +1,7 @@
+---
+
+  smtp_relay_server: smtp-relay.gmail.com
+  smtp_replay_username: gmailuser
+  smtp_replay_password: gmailpassword
+
+...

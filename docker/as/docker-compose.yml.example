@@ -1,0 +1,89 @@
+version: '3.8'
+
+# Base service def
+x-baseapp: &baseapp
+  build: 
+    context: ./app/
+    # pass .env file vars to Docker build.
+    args:
+      MYSQLJ_VERSION: "${MYSQLJ_VERSION}"
+      ASHOME: "${ASHOME}" 
+      ASUSER: "${ASUSER}" 
+  expose:
+    - "8080"
+    - "8081"
+    - "8082"
+    - "8089"
+    - "8090"
+  ulimits:
+    nproc: 65535
+    nofile:
+      soft: 60000
+      hard: 65000
+  environment:
+    # pass .env file vars to app containers.
+    # Update these vars in the .env file.
+    #   i.e.
+    #   AS_VERSION=latest
+    #   MYSQLJ_VERSION=5.1.49
+    #   ASHOME=/home/archivesspace
+    #   AS=/home/archivesspace/archivesspace
+    #   ASUSER=archivesspace
+    #   ROOT_SHARED_FOLDER=/mnt/moss/apps
+    - MYSQLJ_VERSION=${MYSQLJ_VERSION}
+    - ASHOME=${ASHOME}
+    - AS=${AS}
+    - ASUSER=${ASUSER}
+    - ROOT_SHARED_FOLDER=${ROOT_SHARED_FOLDER}
+
+    # DB-related env settings.
+    - MYSQL_HOST=${MYSQL_HOST}
+    - SKIP_SETUP_DATABASE=${SKIP_SETUP_DATABASE}
+    - SKIP_START_SERVER=${SKIP_START_SERVER}
+
+    # DEPLOY_PKG (optional): [./config/config.rb, ./plugins, ./stylesheets].
+    - ASPACE_DEPLOY_PKG_URL=${ASPACE_DEPLOY_PKG_URL}
+
+    # JAVA tuning.
+    # https://github.com/archivesspace/tech-docs/blob/master/provisioning/tuning.md.
+    - ASPACE_JAVA_XMX=${ASPACE_JAVA_XMX}
+    - ASPACE_JAVA_XSS=${ASPACE_JAVA_XSS}
+    - ASPACE_JAVA_MAXPERMSIZE=${ASPACE_JAVA_MAXPERMSIZE}
+    - ASPACE_GC_OPTS=${ASPACE_GC_OPTS}
+  # deploy:
+  #   resources:
+  #     limits:
+  #       cpus: '0.70'
+  #       memory: 3G
+  #     reservations:
+  #       cpus: '0.50'
+  #       memory: 2G
+#  Use swarm if we need the above deploy:
+#  docker swarm init
+#  docker-compose build
+#  docker stack deploy -c docker-compose.yml moss
+
+services:
+  # reverse-proxy container.
+  proxy:
+    image: nginx:1.19
+    # image: nginx:1.25.4
+    volumes:
+      # these six bind-mount volumes should pre-exist on host before container creation.
+      - ./proxy/pre:/etc/nginx/pre
+      - ./proxy/pre/certs:/etc/nginx/ssl
+      - ./proxy/pre/startup.sh:/startup.sh
+      - ./proxy/pre/includes:/etc/nginx/includes
+      - ./proxy/conf.d:/etc/nginx/conf.d
+      - type: bind 
+        source: ${ROOT_SHARED_FOLDER}/certs
+        target: /mnt/moss/apps/certs
+        volume:
+          nocopy: true
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+    tty: true
+    command: [/bin/bash, '/startup.sh']
+

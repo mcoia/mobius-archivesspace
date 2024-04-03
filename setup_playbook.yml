@@ -1,0 +1,142 @@
+---
+### ansible-playbook /mnt/evergreen/playbooks/restart_app_services.yml --private-key /home/blake/.ssh/id_rsa -vvvv -e "hosts=192.168.12.49"
+
+- hosts: localhost
+  connection: local
+  remote_user: ma
+  become_method: sudo
+  vars_files:
+    - vars.yml
+  tasks:
+  - name: Making sure docker-compose is installed
+    package:
+      name: docker-compose
+      state: present
+  - name: Making sure mysql client is installed
+    package:
+      name: libmysqlclient-dev
+      state: present
+  - name: Making sure libpq-dev client is installed
+    package:
+      name: libpq-dev
+      state: present
+  - name: Making sure mysql client is installed
+    package:
+      name: mysql-client
+      state: present
+  - name: Making sure mysql client is installed
+    package:
+      name: mariadb-client
+      state: present
+  - name: Making sure unzip is installed
+    package:
+      name: unzip
+      state: present
+  - name: Installing CPAN packages File::Path
+    become: true
+    ignore_errors: yes
+    shell: export PERL_MM_USE_DEFAULT=1 && perl -MCPAN -e 'install "File::Path"'
+  - name: Installing CPAN packages File::Copy
+    become: true
+    ignore_errors: yes
+    shell: export PERL_MM_USE_DEFAULT=1 && perl -MCPAN -e 'install "File::Copy"'
+  - name: Installing CPAN packages Encode
+    become: true
+    ignore_errors: yes
+    shell: export PERL_MM_USE_DEFAULT=1 && perl -MCPAN -e 'install "Encode"'
+  - name: Installing CPAN packages Text::CSV
+    become: true
+    ignore_errors: yes
+    shell: export PERL_MM_USE_DEFAULT=1 && perl -MCPAN -e 'install "Text::CSV"'
+  - name: Installing CPAN packages DateTime
+    become: true
+    ignore_errors: yes
+    shell: export PERL_MM_USE_DEFAULT=1 && perl -MCPAN -e 'install "DateTime"'
+  - name: Installing CPAN packages DateTime::Format::Duration
+    become: true
+    ignore_errors: yes
+    shell: export PERL_MM_USE_DEFAULT=1 && perl -MCPAN -e 'install "DateTime::Format::Duration"'
+  - name: Installing CPAN packages DateTime::Span
+    become: true
+    ignore_errors: yes
+    shell: export PERL_MM_USE_DEFAULT=1 && perl -MCPAN -e 'install "DateTime::Span"'
+  - name: Installing CPAN packages utf8
+    become: true
+    ignore_errors: yes
+    shell: export PERL_MM_USE_DEFAULT=1 && perl -MCPAN -e 'install "utf8"'
+  - name: Installing CPAN packages DBD::mysql
+    become: true
+    ignore_errors: yes
+    shell: export PERL_MM_USE_DEFAULT=1 && perl -MCPAN -e 'install "DBD::mysql"'
+  - name: Installing CPAN packages DBD::Pg
+    become: true
+    ignore_errors: yes
+    shell: export PERL_MM_USE_DEFAULT=1 && perl -MCPAN -e 'install "DBD::Pg"'
+  - name: Installing CPAN packages JSON
+    become: true
+    ignore_errors: yes
+    shell: export PERL_MM_USE_DEFAULT=1 && perl -MCPAN -e 'install "JSON"'
+  - name: Installing CPAN packages Net::Address::IP::Local
+    become: true
+    ignore_errors: yes
+    shell: export PERL_MM_USE_DEFAULT=1 && perl -MCPAN -e 'install "Net::Address::IP::Local"'
+  - name: Installing CPAN packages Archive::Tar
+    become: true
+    ignore_errors: yes
+    shell: export PERL_MM_USE_DEFAULT=1 && perl -MCPAN -e 'install "Archive::Tar"'
+  - name: Installing CPAN packages IO::Zlib
+    become: true
+    ignore_errors: yes
+    shell: export PERL_MM_USE_DEFAULT=1 && perl -MCPAN -e 'install "IO::Zlib"'
+
+  - stat: path={{env_dest}}
+    register: env_dest_exists
+  - name: Make the compose env file from example
+    when: env_dest_exists.stat.isfile is not defined
+    shell: cp {{env_example_file}} {{env_dest}}
+
+  - stat: path={{docker_compose_dest}}
+    register: compose_dest_exists
+  - name: Make the docker compose file exists
+    when: compose_dest_exists.stat.isfile is not defined
+    shell: cp {{docker_compose_example_file}} {{docker_compose_dest}}
+
+  - name: Update {{env_dest}} to suit MYSQL_HOST
+    become: true
+    lineinfile: 'dest={{env_dest}} state=present regexp="MYSQL_HOST" line="MYSQL_HOST={{mysql_db_host}}"'
+  - name: Update {{env_dest}} to suit ASPACE_VERSION_FOLDER
+    become: true
+    lineinfile: 'dest={{env_dest}} state=present regexp="ASPACE_VERSION_FOLDER" line="ASPACE_VERSION_FOLDER={{aspace_version_folder}}"'
+  - name: Update {{env_dest}} to suit SOLR_VERSION_FOLDER
+    become: true
+    lineinfile: 'dest={{env_dest}} state=present regexp="SOLR_VERSION_FOLDER" line="SOLR_VERSION_FOLDER={{solr_version_folder}}"'
+  - name: Update {{env_dest}} to suit
+    become: true
+    lineinfile: 'dest={{env_dest}} state=present regexp="AS=" line="AS={{aspace_container_aspace_installed_dir}}"'
+  - name: Update {{env_dest}} to suit
+    become: true
+    lineinfile: 'dest={{env_dest}} state=present regexp="ASUSER" line="ASUSER={{aspace_container_aspace_user}}"'
+  - name: Update {{env_dest}} to suit
+    become: true
+    lineinfile: 'dest={{env_dest}} state=present regexp="ROOT_SHARED_FOLDER" line="ROOT_SHARED_FOLDER={{aspace_container_root_shared_folder}}"'
+  - name: Update {{env_dest}} to suit
+    become: true
+    lineinfile: 'dest={{env_dest}} state=present regexp="BACKUP_FOLDER" line="BACKUP_FOLDER={{aspace_backup_folder}}"'
+
+  - name: Building MYSQL local User environment file - client line
+    become: true
+    lineinfile: 'dest=~/.my.cnf state=present regexp="client" line="[client]"'
+  - name: Building MYSQL local User environment file - host line
+    become: true
+    lineinfile: 'dest=~/.my.cnf state=present regexp="host" line="host={{mysql_db_host}}"'
+  - name: Building MYSQL local User environment file - port line
+    become: true
+    lineinfile: 'dest=~/.my.cnf state=present regexp="port" line="port={{mysql_db_port}}"'
+  - name: Building MYSQL local User environment file - user line
+    become: true
+    lineinfile: 'dest=~/.my.cnf state=present regexp="user" line="user={{mysql_master_user}}"'
+  - name: Building MYSQL local User environment file - password line
+    become: true
+    lineinfile: 'dest=~/.my.cnf state=present regexp="password" line="password={{mysql_master_password}}"'
+
+...

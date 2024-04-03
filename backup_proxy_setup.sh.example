@@ -1,0 +1,9 @@
+#!/bin/bash
+
+SRC=/path/to/this/repo
+DST=/path/to/backups/proxy
+
+mkdir -p ${DST}
+find ${DST} -name "*.gz" -mtime +10 -exec rm {} \;
+cd ${DST}
+/bin/tar --exclude-vcs -zcf proxy_and_setup_latest_`date '+%Y-%m-%d'`.tar.gz $SRC/docker/as/proxy
