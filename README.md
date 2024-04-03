@@ -163,7 +163,7 @@ You can create a new instance and restore it from a previous backup
 ./aspace_ctl.pl --action create --url new_aspace.domain.com --restore
 ```
 
-==This assumes that you want the "last" backup. ==
+==This assumes that you want the "last" backup.==
 
 ### If you want to supply a backup file
 
