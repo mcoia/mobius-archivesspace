@@ -21,13 +21,13 @@ Create databases
 Grant privileges to users for newly created databases
 
 Example mysql/mariadb setup
-----
+```
 DROP USER IF EXISTS asadmin@'192.168.%.%';
 CREATE USER asadmin@`192.168.%.%` IDENTIFIED BY 'password';
 GRANT ALL ON *.* TO asadmin@`192.168.%.%` WITH GRANT OPTION;
 GRANT GRANT OPTION ON `as\_%`.* TO asadmin@`192.168.%.%`;
 FLUSH PRIVILEGES;
-----
+```
 
 ### Initialize your environment
 
