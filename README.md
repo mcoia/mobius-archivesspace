@@ -177,7 +177,7 @@ You can create a new instance and restore it from a previous backup
 ### You can clone a server to another for testing or other reason
 
 ```
-./aspace_ctl.pl --action clone --url new_cloned_aspace.domain.com
+./aspace_ctl.pl --action clone --url want_to_clone_from.domain.com
 ```
 
 ## Upgrading
