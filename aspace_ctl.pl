@@ -625,7 +625,7 @@ sub dealWithDockerService
         execDockerCMD($app{"local_username"}, "usermod -u ". $app{"uid"} . " archivesspace", 1);
         execDockerCMD($app{"local_username"}, "groupmod -g ". $app{"gid"} . " archivesspace", 1);
         execDockerCMD($app{"local_username"}, "apt-get install -y ansible", 1);
-        execDockerCMD($app{"local_username"}, "ansible-playbook brick_create_init.yml", 0);
+        execDockerCMD($app{"local_username"}, "ansible-playbook /home/archivesspace/brick_create_init.yml", 1);
         if($email_enabled)
         {
             promptUser("Remember: Archivesspace needs several configuration tweaks for email to work:\npui_email_raise_delivery_errors\npui_email_perform_deliveries\npui_email_sendmail_settings\npui_email_delivery_method\npui_email_enabled\npui_email_override\npui_request_email_fallback_to_address\npui_request_email_fallback_from_address");

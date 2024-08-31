@@ -30,7 +30,7 @@ EXPOSE 22 10050
 ENV DEBIAN_FRONTEND noninteractive
 ENV TZ=America/Chicago
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
-RUN apt-get update && apt-get install -y --no-install-recommends apt-utils
+RUN apt-get update --fix-missing && apt-get install -y --no-install-recommends apt-utils
 RUN apt-get install -y wget curl unzip zip vim net-tools procps psmisc lsb-release gnupg sudo sendmail screen less tzdata git lsof
 RUN dpkg-reconfigure --frontend noninteractive tzdata
 RUN wget https://repo.mysql.com/mysql-apt-config_0.8.29-1_all.deb && \
