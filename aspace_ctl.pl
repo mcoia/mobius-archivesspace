@@ -62,10 +62,12 @@ our %aspace_java_version_compatibility = (
     'v3.2' => "openjdk-11-jre"
 );
 our %aspace_solr_version_compatibility = (
-    'v3.2' => "8.11.3" # covers all versions of archivesspace starting at this version and higher
+    'v3.2' => "8.11.3", # covers all versions of archivesspace starting at this version and higher
+    'v4.0' => "9.4.1" # covers all versions of archivesspace starting at this version and higher
 );
 our %solr_download_url = (
-    '8.11.3' => "https://dlcdn.apache.org/lucene/solr/8.11.3/solr-8.11.3.tgz"
+    '8.11.3' => "https://dlcdn.apache.org/lucene/solr/8.11.3/solr-8.11.3.tgz",
+    '9.4.1' => "https://archive.apache.org/dist/solr/solr/9.4.1/solr-9.4.1.tgz"
 );
 our $dbHandlerMaster;
 our %app;
@@ -634,7 +636,7 @@ sub dealWithDockerService
 
         # start solr if this version of archivesspace needs it
         # if this fails, it's ok, this script should keep going
-        execDockerCMD($app{"local_username"}, "solr_app/bin/solr start", 0);
+        execDockerCMD($app{"local_username"}, "SOLR_MODULES=analysis-extras solr_app/bin/solr start", 0);
         # init solr's archivesspace core index
         execDockerCMD($app{"local_username"}, "solr_app/bin/solr create -c archivesspace -d archivesspace", 0);
 
@@ -924,7 +926,7 @@ sub dealWithAppDatabase
         my $query = "DROP USER IF EXISTS " . $app{"db_usr"} . "\@`%`";
         $log->addLogLine($query) if $debug;
         $dbHandlerMaster->update($query);
-        $query = "CREATE USER IF NOT EXISTS " . $app{"db_usr"} . "\@`%` IDENTIFIED WITH mysql_native_password BY '" . $app{"db_pass"} . "'";
+        $query = "CREATE USER IF NOT EXISTS " . $app{"db_usr"} . "\@`%` IDENTIFIED " . $env{"MYSQL_USER_PASSWORD_QUERY"} . " BY '" . $app{"db_pass"} . "'";
         $log->addLogLine($query) if $debug;
         $dbHandlerMaster->update($query);
         $query = "GRANT ALL PRIVILEGES ON " . $app{"db"} . ".* TO " . $app{"db_usr"} . "\@`%`";

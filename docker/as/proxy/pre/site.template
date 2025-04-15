@@ -58,11 +58,11 @@ server {
 
 server {
 # nginx version 1.19
-  listen 443 ssl http2;
+#  listen 443 ssl http2;
 
 # nginx version 1.25.4
-#  listen 443 ssl;
-#  http2 on;
+  listen 443 ssl;
+  http2 on;
 
   server_name ${PUBLICSKEL};
 
@@ -90,11 +90,11 @@ server {
 server {
 
 # nginx version 1.19
-  listen 443 ssl http2;
+  #listen 443 ssl http2;
 
 # nginx version 1.25.4
-#  listen 443 ssl;
-#  http2 on;
+  listen 443 ssl;
+  http2 on;
 
   server_name ${STAFFSKEL};
 

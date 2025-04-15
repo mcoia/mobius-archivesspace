@@ -66,8 +66,8 @@ x-baseapp: &baseapp
 services:
   # reverse-proxy container.
   proxy:
-    image: nginx:1.19
-    # image: nginx:1.25.4
+    # image: nginx:1.19
+    image: nginx:1.25.4
     volumes:
       # these six bind-mount volumes should pre-exist on host before container creation.
       - ./proxy/pre:/etc/nginx/pre
