@@ -565,7 +565,7 @@ sub dealWithBackup
         my $dateString = $fdate . "_" . $ftime;
         my $sql_file = $app{"backup_folder"} . "/" . $app{"local_username"} . ".sql";
 
-        my $cmd = "mysqldump --routines --column-statistics=0 " . $app{"db"} . " > $sql_file";
+        my $cmd = "mysqldump --routines " . $app{"db"} . " > $sql_file";
         if($type eq 'db')
         {
             print boxText("Backing up DB...");
@@ -636,9 +636,9 @@ sub dealWithDockerService
 
         # start solr if this version of archivesspace needs it
         # if this fails, it's ok, this script should keep going
-        execDockerCMD($app{"local_username"}, "SOLR_MODULES=analysis-extras solr_app/bin/solr start", 0);
+        execDockerCMD($app{"local_username"}, "sh -c 'SOLR_MODULES=analysis-extras solr_app/bin/solr start'", 0);
         # init solr's archivesspace core index
-        execDockerCMD($app{"local_username"}, "solr_app/bin/solr create -c archivesspace -d archivesspace", 0);
+        execDockerCMD($app{"local_username"}, "sleep 5; solr_app/bin/solr create -c archivesspace -d archivesspace", 0);
 
         # best attempt to get the connector jar downloaded into the container. entrypoint.sh also does this, but this is a double effort
         # because it seems to fail sometimes. Gumming up the whole show
