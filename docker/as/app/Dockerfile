@@ -1,4 +1,4 @@
-FROM ubuntu:22.04
+FROM ubuntu:24.04
 
 MAINTAINER Blake Graham-Henderson <blake@mobiusconsortium.org>
 
@@ -33,8 +33,8 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 RUN apt-get update --fix-missing && apt-get install -y --no-install-recommends apt-utils
 RUN apt-get install -y wget curl unzip zip vim net-tools procps psmisc lsb-release gnupg sudo sendmail screen less tzdata git lsof
 RUN dpkg-reconfigure --frontend noninteractive tzdata
-RUN wget https://repo.mysql.com/mysql-apt-config_0.8.29-1_all.deb && \
-    dpkg -i mysql-apt-config_0.8.29-1_all.deb && apt-get update && \
+RUN wget https://repo.mysql.com/mysql-apt-config_0.8.36-1_all.deb && \
+    dpkg -i mysql-apt-config_0.8.36-1_all.deb && apt-get update && \
     apt-get install -y mysql-client && \
     groupadd -g ${GROUP_ID} archivesspace && \
     useradd -m -d ${ASHOME} -s /bin/bash -u ${USER_ID} -g ${GROUP_ID} -G sudo archivesspace && \

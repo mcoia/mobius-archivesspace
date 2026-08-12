@@ -424,7 +424,7 @@ Please enter the test URL");
         reportVars(1,1); #show header, list downwards
         print boxText("If it's not working, try running the DB script inside the container:\ncd /home/archivesspace/archivesspace/scripts && ./setup-database.sh");
         print boxText("If that doesn't work, you might need to manually put the mysql connector jar file inside the container (archivesspace/lib): 
-        curl -LsO https://repo1.maven.org/maven2/mysql/mysql-connector-java/".$env{"MYSQLJ_VERSION"}."/mysql-connector-java-".$env{"MYSQLJ_VERSION"}.".jar");
+        curl -Oq https://repo1.maven.org/maven2/mysql/mysql-connector-j/".$env{"MYSQLJ_VERSION"}."/mysql-connector-j-".$env{"MYSQLJ_VERSION"}.".jar");
     }
 
 }
@@ -644,7 +644,7 @@ sub dealWithDockerService
         # because it seems to fail sometimes. Gumming up the whole show
         execDockerCMD($app{"local_username"},
         "sh -c 'cd /home/archivesspace/archivesspace/lib && ".
-        "curl -LsO https://repo1.maven.org/maven2/mysql/mysql-connector-java/".$env{"MYSQLJ_VERSION"}."/mysql-connector-java-".$env{"MYSQLJ_VERSION"}.".jar'");
+        "curl -Oq https://repo1.maven.org/maven2/mysql/mysql-connector-j/".$env{"MYSQLJ_VERSION"}."/mysql-connector-j-".$env{"MYSQLJ_VERSION"}.".jar'");
 
         promptUser("We are all set. Entrypoint on container is next.");
 

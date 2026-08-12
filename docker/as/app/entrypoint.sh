@@ -23,7 +23,7 @@ fi
 
 # Download MySQL Java connector if needed.
 find $AS/lib -name "mysql-connector*.jar" -print | egrep '.*' || \
-  curl -LsO https://repo1.maven.org/maven2/mysql/mysql-connector-java/${MYSQLJ_VERSION}/mysql-connector-java-${MYSQLJ_VERSION}.jar
+  curl -Oq https://repo1.maven.org/maven2/mysql/mysql-connector-j/${MYSQLJ_VERSION}/mysql-connector-j-${MYSQLJ_VERSION}.jar
 if [ -f mysql-connector*.jar ]; then sudo mv -f mysql-connector*.jar ${AS}/lib; fi
 
 sudo chown -R ${ASUSER}:${ASUSER} ${ASHOME}
